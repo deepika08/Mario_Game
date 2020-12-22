@@ -10,6 +10,7 @@ var PLAY =1;
 var END =0;
 var gameState = PLAY;
 var dieSound, jumpSound, checkpointSound;
+var highScore =0;
 
 function preload(){
   mario_running = loadAnimation("mario00.png","mario01.png","mario02.png","mario03.png");
@@ -32,7 +33,7 @@ function setup(){
   mario.addAnimation("collided", mario_collided);
   mario.scale = 1;
   mario.setCollider("circle", 0,0,20);
-  mario.debug= true;
+  
 
 
   invisibleGround = createSprite(50,330,width,10);  
@@ -54,7 +55,7 @@ function setup(){
   restart = createSprite(width/2, 190, 20, 10);
   restart.addImage(rImg);
   restart.scale =0.5;
-  
+  localStorage[highScore]=0;
 }
 
 function draw(){
@@ -85,10 +86,18 @@ function draw(){
     mario.collide(invisibleGround);
     spawnObstacles();
     spawnBricks();
-    if(mario.isTouching(brick1Group)){
-      score = score+ 1;
-      brick1Group.destroyEach();
-    }
+    for (i = 0; i < brick1Group.length; i++) {
+      if (mario.isTouching(brick1Group.get(i))) {
+        score += 1;
+
+        if (localStorage[highScore] < score) {
+          localStorage[highScore] = score;
+        }
+        brick1Group.get(i).destroy();
+       
+        }
+      }
+    
     
     if(mario.isTouching(obstaclesGroup)){
       gameState = END;
